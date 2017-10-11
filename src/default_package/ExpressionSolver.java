@@ -228,7 +228,7 @@ public class ExpressionSolver {
 		//===================================================== SIGN SIMPLIFICATION =================================================================
 		if(solution.charAt(0) == '+')
 			solution = solution.substring(1);
-		while(solution.contains("--") || solution.contains("+-")){
+		while(solution.contains("--") || solution.contains("+-") || solution.contains("*+") || solution.contains("/+")){
 			for(int i = 0; i < solution.length()-1; i++){
 				if(solution.substring(i,i+2).equals("+-")){
 					solution = solution.substring(0,i) + "-" + solution.substring(i+2);
@@ -238,8 +238,18 @@ public class ExpressionSolver {
 					solution = solution.substring(0,i) + "+" + solution.substring(i+2);
 					break;
 				}
+                                else if(solution.substring(i,i+2).equals("*+")){
+                                        solution = solution.substring(0,i) + "*" + solution.substring(i+2);
+					break;
+                                }
+                                else if(solution.substring(i,i+2).equals("/+")){
+                                        solution = solution.substring(0,i) + "/" + solution.substring(i=2);
+                                        break;
+                                }
 			}
 		}
+                if(solution.charAt(0) == '+')
+			solution = solution.substring(1);
  		//===================================================== BASIC ARITHMETIC ==============================================================================
 		////System.out.println("multiplication and division: "+solution);
 		if(solution.length() > 0 && (solution.contains("*") || solution.contains("/"))){

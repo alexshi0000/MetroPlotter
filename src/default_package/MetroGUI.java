@@ -50,6 +50,7 @@ public class MetroGUI extends javax.swing.JFrame {
 
         Graph.setBackground(new java.awt.Color(51, 59, 84));
         Graph.setForeground(new java.awt.Color(255, 255, 255));
+        Graph.setPreferredSize(new java.awt.Dimension(706, 706));
 
         javax.swing.GroupLayout GraphLayout = new javax.swing.GroupLayout(Graph);
         Graph.setLayout(GraphLayout);
@@ -153,7 +154,7 @@ public class MetroGUI extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(Graph, javax.swing.GroupLayout.DEFAULT_SIZE, 706, Short.MAX_VALUE)
+                .addComponent(Graph, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -170,7 +171,9 @@ public class MetroGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void PlotButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PlotButtonMouseClicked
+        FunctionPanel.resize = true;
         Main.mainLoop(FunctionField.getText());
+        FunctionPanel.resize = false;
     }//GEN-LAST:event_PlotButtonMouseClicked
 
     private void FunctionFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FunctionFieldActionPerformed
@@ -231,6 +234,7 @@ public class MetroGUI extends javax.swing.JFrame {
                 window = new MetroGUI();
                 window.Graph.setLayout(new BorderLayout());
                 window.Graph.add(new FunctionPanel(),BorderLayout.CENTER);
+                window.pack();
                 window.setVisible(true);
             }
         });
