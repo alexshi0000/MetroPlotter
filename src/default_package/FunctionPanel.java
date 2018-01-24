@@ -6,15 +6,21 @@
 package default_package;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.Graphics2D.*;
 /**
  *
  * @author lx_user
  */
 public class FunctionPanel extends JPanel{
     static String function = "";
-    static double lowerBound;
-    static double upperBound;
+    static double lowerBoundY;
+    static double upperBoundY;
+    static double lowerBoundX;
+    static double upperBoundX;
     static double resolution;
+    static double setX = 0;
+    static double setY = 0;
+    static double scale;
     static boolean resize = true;
     public static void setFunction(String f){
         function = f;
@@ -26,28 +32,67 @@ public class FunctionPanel extends JPanel{
         }
         function = tmp;
     }
-    public static void setLowerBound(double lowerBound){
-        FunctionPanel.lowerBound = lowerBound;
-    }
-    public static void setUpperBound(double upperBound){
-        FunctionPanel.upperBound = upperBound;
-    }
-    public static void setResolution(double resolution){
-        FunctionPanel.resolution = resolution;
-    }
     @Override 
-    public void paintComponent(Graphics g){
-        super.paintComponent(g);
+    public void paintComponent(Graphics g2){
+        Graphics2D g = (Graphics2D) g2;
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+        RenderingHints.VALUE_ANTIALIAS_ON);
+        
         g.setColor(new Color(51,59,84));
         g.fillRect(0, 0, this.getWidth(), this.getHeight());
         g.setColor(new Color(170,64,255));
-        g.drawLine(this.getWidth()/2, 0, this.getWidth()/2, this.getHeight());
-        g.drawLine(0,this.getHeight()/2,this.getWidth(),this.getHeight()/2);
+        //g.drawLine(this.getWidth()/2, 0, 5*this.getWidth()/10, this.getHeight());
+        //g.drawLine(0,5*this.getHeight()/10,this.getWidth(),this.getHeight()/2);
+        double xStart = ((upperBoundX-lowerBoundX)/2);
+        double yStart = ((upperBoundY-lowerBoundY)/2);
+        while(xStart <= upperBoundX){
+            g.drawLine((int)Math.round(((xStart-lowerBoundX)/(upperBoundX-lowerBoundX)) * this.getWidth()),
+                        0,
+                        (int)Math.round(((xStart-lowerBoundX)/(upperBoundX-lowerBoundX)) * this.getWidth()),
+                        this.getHeight());
+                        
+                        
+            xStart += scale;
+        }
+        xStart = ((upperBoundX-lowerBoundX)/2);
+        while(xStart >= lowerBoundX){
+            g.drawLine((int)Math.round(((xStart-lowerBoundX)/(upperBoundX-lowerBoundX)) * this.getWidth()),
+                        0,
+                        (int)Math.round(((xStart-lowerBoundX)/(upperBoundX-lowerBoundX)) * this.getWidth()),
+                        this.getHeight());
+                        
+                        
+            xStart -= scale;
+        }
+        //
+        while(yStart <= upperBoundY){
+            g.drawLine(
+                        0,
+                        (int)Math.round(this.getHeight() - ((yStart-lowerBoundY)/(upperBoundY-lowerBoundY)) * this.getHeight()),
+                        this.getWidth(),
+                        (int)Math.round(this.getHeight() - ((yStart-lowerBoundY)/(upperBoundY-lowerBoundY)) * this.getHeight()));
+                        
+                        
+            yStart += scale;
+        }
+        yStart = ((upperBoundY-lowerBoundY)/2);
+        while(yStart >= lowerBoundY){
+            g.drawLine(
+                        0,
+                        (int)Math.round(this.getHeight() - ((yStart-lowerBoundY)/(upperBoundY-lowerBoundY)) * this.getHeight()),
+                        this.getWidth(),
+                        (int)Math.round(this.getHeight() - ((yStart-lowerBoundY)/(upperBoundY-lowerBoundY)) * this.getHeight()));
+                        
+                        
+            yStart -= scale;
+        }
         if(!resize){
-            double x1 = -10e9, y1 = 10e9, x2, y2 = 0;
+            System.out.println();
+            double x1 = -10e15, y1 = 10e15, x2, y2 = 0;
             String tmp = new String(function);
             String value1 = "NaN", value2 = "";
-            for(x2 = lowerBound; x2 < upperBound; x2+=resolution){
+            double res = resolution;
+            for(x2 = lowerBoundX; x2 < upperBoundX; x2+=res){
                 tmp = new String(function);
                 try{
                     while(tmp.contains("x")){
@@ -62,26 +107,35 @@ public class FunctionPanel extends JPanel{
                     y2 = Double.parseDouble(value2);
                 } catch (Exception e){
                 }
-                if(Math.sqrt(Math.pow(x1-x2,2) + Math.pow(y1-y2,2)) < 10 && !value2.equals("NaN") && !value1.equals("NaN") && ((y1 <= upperBound && y1 >= lowerBound) || (y2 <= upperBound && y2 >= lowerBound))){
+                if(y2 != setY)
+                    g.setColor(new Color(73,197,255));
+                if(!value2.equals("NaN") && !value1.equals("NaN") && ((y1 <= upperBoundY && y1 >= lowerBoundY) || (y2 <= upperBoundY && y2 >= lowerBoundY))){
                     //System.out.println(x1+" "+x2+" "+y1+" "+y2);
-                    if(Math.sqrt(Math.pow(x1-x2,2) + Math.pow(y1-y2,2)) > 2){
-                        g.fillOval(this.getWidth()/2+(int)((x1/upperBound)*(this.getWidth()/2)),
-                                this.getHeight()/2-(int)((y1/upperBound)*(this.getHeight()/2)),
-                                1,1
-                        );
-                    }
-                    else{
-                        g.drawLine(this.getWidth()/2+(int)((x1/upperBound)*(this.getWidth()/2)),
-                                    this.getHeight()/2-(int)((y1/upperBound)*(this.getHeight()/2)),
-                                    this.getWidth()/2+(int)((x2/upperBound)*(this.getWidth()/2)),
-                                    this.getHeight()/2-(int)((y2/upperBound)*(this.getHeight()/2))
-                        );
-                    }
+                    
+                    g.drawLine((int)Math.round(((x1-lowerBoundX)/(upperBoundX-lowerBoundX)) * this.getWidth()),
+                                   (int)Math.round(this.getHeight() - ((y1-lowerBoundY)/(upperBoundY-lowerBoundY)) * this.getHeight()),
+                                   (int)Math.round(((x2-lowerBoundX)/(upperBoundX-lowerBoundX)) * this.getWidth()),
+                                   (int)Math.round(this.getHeight() - ((y2-lowerBoundY)/(upperBoundY-lowerBoundY)) * this.getHeight())
+                                );
+                    res = resolution;
+                }
+                //insert optimization code here
+                try{
+                    double xLen = x2 - x1;
+                    double yLen = y2 - y1;
+                    double mag = Math.sqrt(xLen*xLen + yLen*yLen);
+                    double coeff = resolution/mag;
+                    res = xLen*coeff;
+                    if(res < 10e-6)
+                        res = 10e-6;
+                }catch(Exception e){
+                    res = 1;
                 }
                 y1 = y2;
                 x1 = x2;
                 value1 = value2;
             }
+            resize = false;
         }
     }
 }
