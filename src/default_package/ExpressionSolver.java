@@ -11,395 +11,255 @@ import java.text.*;
  * @author lx_user
  */
 public class ExpressionSolver {
-    
-//simple plotter using a recursive expression solver
-//there are many small neat tricks in expression evaluating for example
-//-6*-6 becomes --36 which becomes +36
-//-6+10 the minus sign is ignored as a delimiter
-//for exponents there are three edge cases: (a+b)^c, c^(a+b), a^b, (a+b)^(c+d)
-//next time use a expression tree instead of this nonsense
-    static int recursionLevel = 0;
-    static String[] DELIMITERS = {"+","-","+-","--","*","/","^"};
-    public static String evaluate(String exp){
-        //System.out.println(recursionLevel+"\t"+exp);
-             recursionLevel++;
-             String solution = new String(exp);			//copy exp into a new string
-             boolean functionFound = solution.contains("tan") || 
-                     solution.contains("sin") || 
-                     solution.contains("cos") || 
-                     solution.contains("log") || 
-                     solution.contains("abs");
-             //=================================================== FUNCTIONS =======================================================================
-             if(functionFound){
-                 for(int i = 0; i < solution.length() - 3; i++){
-                         boolean keyFound = solution.substring(i,i+4).equals("tan(") || 
-                                 solution.substring(i,i+4).equals("cos(") || 
-                                 solution.substring(i,i+4).equals("sin(") || 
-                                 solution.substring(i,i+4).equals("log(") || 
-                                 solution.substring(i,i+4).equals("abs(");
-                         if(keyFound){
-                                 int levels = 0;
-                                 for(int r = i+3; r < solution.length(); r++){
-                                         if(solution.charAt(r) == '(')
-                                                 levels++;
-                                         if(solution.charAt(r) == ')')
-                                                 levels--;
-                                         if(levels == 0){
-                                                 String tmp = "";
-                                                 try{	tmp += solution.substring(0,i);	}catch(Exception e){}
-                                                 if(solution.substring(i,i+4).equals("tan(")){
-                                                         try{	
-                                                                 NumberFormat formatter = new DecimalFormat("###.#####");
-                                                                 String f = formatter.format(Math.tan(Double.parseDouble(evaluate(solution.substring(i+4,r)))));
-                                                                 if(f.equals("�"))
-                                                                         return "NaN";
-                                                                 tmp += "("+f+")";
-                                                         }catch(Exception e){}		//i added brackets here because the function serves as a singular term
-                                                 }
-                                                 else if(solution.substring(i,i+4).equals("cos(")){
-                                                         try{	
-                                                                 NumberFormat formatter = new DecimalFormat("###.#####");
-                                                                 String f = formatter.format(Math.cos(Double.parseDouble(evaluate(solution.substring(i+4,r)))));
-                                                                 if(f.equals("�"))
-                                                                         return "NaN";
-                                                                 tmp += "("+f+")";
-                                                         }catch(Exception e){}
-                                                 }
-                                                 else if(solution.substring(i,i+4).equals("sin(")){
-                                                         try{	
-                                                                 NumberFormat formatter = new DecimalFormat("###.#####");
-                                                                 String f = formatter.format(Math.sin(Double.parseDouble(evaluate(solution.substring(i+4,r)))));
-                                                                 if(f.equals("�"))
-                                                                         return "NaN";
-                                                                 tmp += "("+f+")";
-                                                         }catch(Exception e){}
-                                                 }
-                                                 else if(solution.substring(i,i+4).equals("log(")){
-                                                         try{	
-                                                                 NumberFormat formatter = new DecimalFormat("###.#####");
-                                                                 String f = formatter.format(Math.log(Double.parseDouble(evaluate(solution.substring(i+4,r)))));
-                                                                 if(f.equals("�"))
-                                                                         return "NaN";
-                                                                 tmp += "("+f+")";
-                                                         }catch(Exception e){}
-                                                 }
-                                                 else if(solution.substring(i,i+4).equals("abs(")){
-                                                         try{	
-                                                                 NumberFormat formatter = new DecimalFormat("###.#####");
-                                                                 String f = formatter.format(Math.abs(Double.parseDouble(evaluate(solution.substring(i+4,r)))));
-                                                                 if(f.equals("�"))
-                                                                         return "NaN";
-                                                                 tmp += "("+f+")";
-                                                         }catch(Exception e){}
-                                                 }
-                                                 try{	tmp += 	solution.substring(r+1);	}catch(Exception e){}
-                                                 solution = tmp;
-                                                 //System.out.println(solution);
-                                                 if(solution.charAt(0) == '+')
-                                                         solution = solution.substring(1);
-                                                 return evaluate(solution);
-                                         }
-                                 }
-                         }
-                 }
-             }
-             //===================================================== EXPONENTS =====================================================================================
-             for(int i = 1; i < solution.length()-1; i++){
-                     if(solution.charAt(i) == '^'){
-                             //System.out.println("exponents: "+solution);
-                             if(solution.charAt(i-1) == ')'){			//bracket in front of exponent sign
-                                     int levels = 0;
-                                     for(int l = i-1; l >= 0; l--){
-                                             if(solution.charAt(l) == ')')
-                                                     levels++;
-                                             else if(solution.charAt(l) == '('){
-                                                     levels--;
-                                                     if(levels == 0){
-                                                             if(solution.charAt(i+1) == '('){
-                                                                     int elevels = 0;
-                                                                     for(int r = i+1; r < solution.length(); r++){
-                                                                             if(solution.charAt(r) == '(')
-                                                                                     elevels++;
-                                                                             else if(solution.charAt(r) == ')'){
-                                                                                     elevels--;
-                                                                                     if(elevels == 0){
-                                                                                             String tmp = "";
-                                                                                             try{	tmp += solution.substring(0,l);	} catch(Exception e){}
-                                                                                             try{	
-                                                                                                     NumberFormat formatter = new DecimalFormat("###.#####");  
-                                                                                                     String f = formatter.format(Math.pow(Double.parseDouble(evaluate(solution.substring(l+1,i-1))), Double.parseDouble(evaluate(solution.substring(i+2,r)))));  
-                                                                                                     tmp += f;
-                                                                                             } catch(Exception e){} 
-                                                                                             try{	tmp += solution.substring(r+1);	} catch (Exception e){}
-                                                                                             solution = tmp;
-                                                                                             return evaluate(solution);
-                                                                                     }
-                                                                             }
-                                                                     }
-                                                             }
-                                                             else{
-                                                                     int r = i+2;
-                                                                     while(true){
-                                                                             if(r >= solution.length())
-                                                                                     break;
-                                                                             if(edgeFound(solution.charAt(r)))			
-                                                                                     break;
-                                                                             r++;
-                                                                     }
-                                                                     String tmp = "";
-                                                                     try{	tmp += solution.substring(0,l);	} catch(Exception e){}
-                                                                     try{	
-                                                                             NumberFormat formatter = new DecimalFormat("###.#####");
-                                                                             String f = formatter.format(Math.pow(Double.parseDouble(evaluate(solution.substring(l+1,i-1))), Double.parseDouble(evaluate(solution.substring(i+1,r)))));
-                                                                             tmp += f;
-                                                                     } catch(Exception e){} 
-                                                                     try{	tmp += solution.substring(r);	} catch (Exception e){}
-                                                                     solution = tmp;
-                                                                     return evaluate(solution);
-                                                             }
-                                                     }
-                                             }
-                                     }
-                             }
-                             else{
-                                     if(solution.charAt(i+1) == '('){
-                                             int levels = 0;
-                                             for(int r = i+1; r< solution.length(); r++){
-                                                     if(solution.charAt(r) == '(')
-                                                             levels++;
-                                                     else if(solution.charAt(r) == ')'){
-                                                             levels--;
-                                                             if(levels == 0){
-                                                                     int l = i-1;
-                                                                     while(true){
-                                                                             if(l < 0)
-                                                                                     break;
-                                                                             else if(edgeFound(solution.charAt(l)))
-                                                                                     break;
-                                                                             l--;
-                                                                     }
-                                                                     String tmp = "";
-                                                                     try{	tmp += solution.substring(0,l+1);	}catch(Exception e){}
-                                                                     try{	
-                                                                             NumberFormat formatter = new DecimalFormat("###.#####");
-                                                                             String f = formatter.format(Math.pow(Double.parseDouble(evaluate(solution.substring(l+1,i))), Double.parseDouble(evaluate(solution.substring(i+2,r)))));
-                                                                             tmp += f;	
-                                                                     }catch(Exception e){}
-                                                                     try{	tmp += solution.substring(r+1);	}catch(Exception e){}
-                                                                     solution = tmp;
-                                                                     return evaluate(solution);
-                                                             }
-                                                     }
-                                             }
-                                     }
-                                     else{
-                                             int r = i+2, l = i-1;
-                                             while(true){
-                                                     if(r >= solution.length())
-                                                             break;
-                                                     if(edgeFound(solution.charAt(r)))			
-                                                             break;
-                                                     r++;
-                                             }
-                                             while(true){
-                                                     if(l < 0)
-                                                             break;
-                                                     if(edgeFound(solution.charAt(l)))
-                                                             break;
-                                                     l--;
-                                             }
-                                             String tmp = "";
-                                             try{	tmp += solution.substring(0,l+1);	}catch(Exception e){}
-                                             try{	
-                                                     NumberFormat formatter = new DecimalFormat("###.#####");
-                                                     String f = formatter.format(Math.pow(Double.parseDouble(evaluate(solution.substring(l+1,i))), Double.parseDouble(evaluate(solution.substring(i+1,r)))));
-                                                     tmp += Math.pow(Double.parseDouble(evaluate(solution.substring(l+1,i))), Double.parseDouble(evaluate(solution.substring(i+1,r))));	
-                                             }catch(Exception e){}
-                                             try{	tmp += solution.substring(r);	}catch(Exception e){}
-                                             solution = tmp;
-                                             return evaluate(solution);
-                                     }
-                             }	
-                     }
-             }
-             //===================================================== BRACKETS ======================================================================================
-             //the brakets handle devide and conquer technique
-             int levels = 0;								//each recursive call will solve only one bracketed expression
-             int startIndex = 0;
-             while(solution.contains("(")){
-                     for(int i = 0; i < solution.length(); i++){	//evaluate parent
-                             if(solution.charAt(i) == '('){
-                                     if(levels == 0)
-                                             startIndex = i;
-                                     levels++;
-                             }
-                             if(solution.charAt(i) == ')'){  
-                                     levels--;
-                                     if(levels == 0){
-                                             String value = evaluate(solution.substring(startIndex+1,i));
-                                             if(solution.length() > 1)
-                                                     solution = solution.substring(0, startIndex) + value + solution.substring(i+1);
-                                             break;
-                                     }
-                             }
-                     }
-             }
-             //===================================================== SIGN SIMPLIFICATION =================================================================
-             if(solution.charAt(0) == '+')
-                     solution = solution.substring(1);
-             while(solution.contains("--") || solution.contains("+-") || solution.contains("*+") || solution.contains("/+")){
-                     for(int i = 0; i < solution.length()-1; i++){
-                             if(solution.substring(i,i+2).equals("+-")){
-                                     solution = solution.substring(0,i) + "-" + solution.substring(i+2);
-                                     break;
-                             }
-                             else if(solution.substring(i,i+2).equals("--")){
-                                     solution = solution.substring(0,i) + "+" + solution.substring(i+2);
-                                     break;
-                             }
-                             else if(solution.substring(i,i+2).equals("*+")){
-                                     solution = solution.substring(0,i) + "*" + solution.substring(i+2);
-                                     break;
-                             }
-                             else if(solution.substring(i,i+2).equals("/+")){
-                                     solution = solution.substring(0,i) + "/" + solution.substring(i=2);
-                                     break;
-                             }
-                     }
-             }
-             if(solution.charAt(0) == '+')
-                     solution = solution.substring(1);
-             //===================================================== BASIC ARITHMETIC ==============================================================================
-             ////System.out.println("multiplication and division: "+solution);
-             if(solution.length() > 0 && (solution.contains("*") || solution.contains("/"))){
-                     for(int m = 1; m < solution.length()-1; m++){
-                             if(solution.charAt(m) == '*' || solution.charAt(m) == '/' || solution.substring(m,m+2).equals("*-") || solution.substring(m,m+2).equals("/-")){
-                                     int r = m+1, l = m-1;
-                                     while(true){
-                                             if(r >= solution.length())
-                                                     break;
-                                             if(edgeFound(solution.charAt(r)) && (!solution.substring(m,m+2).equals("*-") || r > m+1) && (!solution.substring(m,m+2).equals("/-") || r > m+1))			
-                                                     break;
-                                             r++;
-                                     }
-                                     while(true){
-                                             if(l < 0)
-                                                     break;
-                                             if(edgeFound(solution.charAt(l)))
-                                                     break;
-                                             l--;
-                                     }
-                                     String tmp = "";
-                                     try{	tmp += solution.substring(0,l+1);	} catch(Exception e){}
-                                     if(solution.charAt(m) == '*'){
-                                             try{	
-                                                     NumberFormat formatter = new DecimalFormat("###.#####");
-                                                     String f = formatter.format(Double.parseDouble(solution.substring(l+1,m)) * Double.parseDouble(solution.substring(m+1,r)));
-                                                     tmp += f;	
-                                             }catch(Exception e){}
-                                     }
-                                     else if(solution.charAt(m) == '/'){
-                                             try{
-                                                     NumberFormat formatter = new DecimalFormat("###.#####");
-                                                     String f = formatter.format(Double.parseDouble(solution.substring(l+1,m)) / Double.parseDouble(solution.substring(m+1,r)));
-                                                     tmp += f;	
-                                             }catch(Exception e){}
-                                     }
-                                     try{		tmp += solution.substring(r);	}catch(Exception e){}
-                                     solution = tmp;
-                                     if(solution.charAt(0) == '+')
-                                             solution = solution.substring(1);
-                                     return evaluate(solution);
-                             }
-                     }
-             }
-             int minusCounter = 0;
-             for(int i = 0; i < solution.length(); i++)
-                     if(solution.charAt(i) == '-')
-                             minusCounter++;
-             //System.out.println("addition and subtraction: "+solution);
-             if(solution.length() > 0 && (solution.contains("+") || (solution.contains("-") && (solution.charAt(0) != '-' || minusCounter > 1) ) ) ){
-                     for(int m = 1; m < solution.length(); m++){
-                             if(solution.charAt(m) == '+' || solution.charAt(m) == '-'){
-                                     int r = m+1, l = m-1;
-                                     while(true){
-                                             if(r >= solution.length())
-                                                     break;
-                                             if(edgeFound(solution.charAt(r)))				
-                                                     break;
-                                             r++;
-                                     }
-                                     while(true){
-                                             if(l < 0)
-                                                     break;
-                                             if(edgeFound(solution.charAt(l)) && (l != 0 || solution.charAt(0) != '-'))
-                                                     //there is a edge case here for the negative number as the first term might confuse it with a subtraction sign
-                                                     break;
-                                             l--;
-                                     }
-                                     String tmp = "";
-                                     try{	tmp += solution.substring(0,l+1);	}catch(Exception e){}
-                                     if(solution.charAt(m) == '+'){
-                                             try{	
-                                                     NumberFormat formatter = new DecimalFormat("###.#####");
-                                                     String f = formatter.format(Double.parseDouble(solution.substring(l+1,m)) + Double.parseDouble(solution.substring(m+1,r)));
-                                                     tmp += f;	
-                                             }catch(Exception e){}
-                                     }
-                                     else{
-                                             try{	
-                                                     NumberFormat formatter = new DecimalFormat("###.#####");
-                                                     String f = formatter.format(Double.parseDouble(solution.substring(l+1,m)) - Double.parseDouble(solution.substring(m+1,r)));
-                                                     tmp += f;
-                                             }catch(Exception e){}
-                                     }
-                                     try{		tmp += solution.substring(r);	}catch(Exception e){}
-                                     solution = tmp;
-                                     if(solution.charAt(0) == '+')
-                                             solution = solution.substring(1);
-                                     return evaluate(solution);
-                             }
-                     }
-             }
-             if(solution.charAt(0) == '+')
-                     solution = solution.substring(1);
-             //System.out.println("solution: "+solution);
-             return solution;
-    }
-    public static boolean edgeFound(char symbol){
-        boolean ret = true;
-        try{
-                ret = symbol == '*' || symbol == '/' || symbol == '-' || symbol == '+' || symbol == '^' || symbol == ')' || symbol == '(';
-        } catch (Exception e){
-                ret = false;
+	static HashMap<String, Integer> opPrecedence = new HashMap<String, Integer>();
+	public static void initPrecedence(){
+		opPrecedence.put("^", 4);
+		opPrecedence.put("*", 3);
+		opPrecedence.put("/", 3);
+		opPrecedence.put("+", 2);
+		opPrecedence.put("-", 2);
+		opPrecedence.put(")", 1);
+		opPrecedence.put("(", 1);
+	}
+        public static String getTokenString(String expression){
+                String[] tokens = tokenize(expression);
+                String ret = "[ ";
+                for (String s: tokens)
+                    ret += s + ", ";
+                return ret.substring(0,ret.length()-2)+" ]";
         }
-        return ret;
-    }
-    public static String trim(String s){//trims the expression to make it acceptable
-        while(s.indexOf(" ") != -1){
-            try{
-                    s = s.substring(0,s.indexOf(" ")) + s.substring(s.indexOf(" ")+1, s.length());
-            } catch (Exception e){
-                    //do nothing, for now
+	public static String[] tokenize(String expression){
+		ArrayList<String> tokens = new ArrayList<String>();
+		String[] output;
+		int outputSize = 0;
+                boolean prevWasOperator = true;    //use this to check for unary operators (-)
+		for(int i = 0; i < expression.length(); i++){
+			switch(expression.charAt(i)){
+			case '^':
+				tokens.add("^");
+				tokens.add("");
+                                prevWasOperator = true;
+				break;
+			case '*':
+				tokens.add("*");
+				tokens.add("");
+				prevWasOperator = true;
+                                break;
+			case '/':
+				tokens.add("/");
+				tokens.add("");
+				prevWasOperator = true;
+                                break;
+			case '+':
+				tokens.add("+");
+				tokens.add("");
+				prevWasOperator = true;
+                                break;
+			case '-':
+                                if(prevWasOperator && expression.charAt(i+1) != '('){
+                                        tokens.add("-");
+                                }
+                                else if(prevWasOperator && expression.charAt(i+1) == '('){
+                                        tokens.add("-1");
+                                        tokens.add("*");
+                                }
+                                else{
+                                        tokens.add("-");
+                                        tokens.add("");
+                                        prevWasOperator = true;
+                                }
+                                break;
+			case '(':
+				tokens.add("(");
+				tokens.add("");
+                                prevWasOperator = true;
+				break;
+			case ')':
+				tokens.add(")");
+				tokens.add("");
+                                prevWasOperator = false;
+				break;
+			case ' ':
+				//remove whitespace
+				break;
+			default:	//alphanumeric characters
+				if(tokens.size() < 1)
+					tokens.add("");
+				String item = tokens.get(tokens.size()-1) + expression.charAt(i);
+				tokens.remove(tokens.size()-1);
+				tokens.add(item);
+                                prevWasOperator = false;
+			}
+		}
+		for(int i = 0; i < tokens.size(); i++){
+			if(tokens.get(i).length() > 0)
+				outputSize++;
+		}
+		output = new String[outputSize];
+		int j = 0;
+		for (int i = 0; i < tokens.size(); i++){
+			if(tokens.get(i).length() > 0){
+				output[j] = tokens.get(i);
+				j++;
+			} 	
+		}
+		return output;
+	}
+	public static String infixToPostfix(String expression){
+                if(expression == "") //empty string
+                    return "";
+		Stack<String> operationStack = new Stack<String>();
+		String[] tokens = tokenize(expression);
+		String ret = "";
+		for(String tok: tokens){
+			if(tok.equals("(")){
+				operationStack.push(tok);
+			}
+			else if(tok.equals(")")){
+				while(!operationStack.peek().equals("("))
+					ret += operationStack.pop() +" ";
+				operationStack.pop();
+			}
+			else if(opPrecedence.containsKey(tok)){
+				while(!operationStack.isEmpty() && opPrecedence.get(operationStack.peek()) >= opPrecedence.get(tok))
+					ret += operationStack.pop() +" ";
+				operationStack.push(tok);
+			}
+			else{
+				ret += tok + " ";
+			}
+		}
+		while (!operationStack.isEmpty())
+			ret += operationStack.pop() + " ";
+		return ret;
+	}
+	public static double evaluatePostfix(String expression){
+                if(expression == "")
+                    return 0;
+		Stack<Double> operandStack = new Stack<Double>();
+		String[] tokens = expression.split(" ");
+		for(String tok: tokens){
+			double num1, num2;
+			switch(tok){
+			case "+":
+				num2 = (double)operandStack.pop();
+				num1 = (double)operandStack.pop();
+				operandStack.push(num1+num2);
+				break;
+			case "-":
+				num2 = (double)operandStack.pop();
+				num1 = (double)operandStack.pop();
+				operandStack.push(num1-num2);
+				break;
+			case "*":
+				num2 = (double)operandStack.pop();
+				num1 = (double)operandStack.pop();
+				operandStack.push(num1*num2);
+				break;
+			case "/":
+				num2 = (double)operandStack.pop();
+				num1 = (double)operandStack.pop();
+				operandStack.push(num1/num2);
+				break;
+			case "^":
+				num2 = (double)operandStack.pop();
+				num1 = (double)operandStack.pop();
+				operandStack.push(Math.pow(num1, num2));
+				break;
+			default:
+				operandStack.push(Double.parseDouble(tok));
+			}
+		}
+		return (double)operandStack.pop();
+	}
+        public static boolean hasFunction(String expression){
+            return expression.contains("log")   ||
+                   expression.contains("sin")   ||
+                   expression.contains("cos")   ||
+                   expression.contains("tan")   ||
+                   expression.contains("abs")
+                   /*
+                    * I did not add sqrt because its better to use n^0.5 than
+                    * to use sqrt(n) which requires 2 more characters to type
+                    */
+            ;
+        }
+        public static boolean isOperator(char c){
+            return c == '^' ||
+                   c == '*' ||
+                   c == '/' ||
+                   c == '-' ||
+                   c == '+';
+        }
+        public static String getImplicitMultiplication(String expression){
+            if(expression == "")
+                return "";
+            String ret = ""+expression.charAt(0);
+            for(int i = 1; i < expression.length(); i++){
+                if((expression.charAt(i) == '(' || expression.charAt(i) == 'x') && !isOperator(expression.charAt(i-1)))
+                    ret += "*(";
+                else
+                    ret += expression.charAt(i);
+            }
+            return ret;
+        }
+	public static double evaluate(String expression){
+            expression = getImplicitMultiplication(expression);
+            while(hasFunction(expression)){
+                int start = 0;
+                Stack<Integer> bracketStack = new Stack<Integer>();
+                if(expression.indexOf("log") != -1)
+                    start = expression.indexOf("log");
+                else if(expression.indexOf("sin") != -1)
+                    start = expression.indexOf("sin");
+                else if(expression.indexOf("cos") != -1)
+                    start = expression.indexOf("cos");
+                else if(expression.indexOf("tan") != -1)
+                    start = expression.indexOf("tan");
+                else if(expression.indexOf("abs") != -1)
+                    start = expression.indexOf("abs");
+                for(int i = start+3; i < expression.length(); i++){
+                    if (expression.charAt(i) == '(')
+                        bracketStack.push(i);
+                    else if (expression.charAt(i) == ')')
+                        bracketStack.pop();
+                    if(bracketStack.isEmpty()){
+                        String simplifiedExpression = "";
+                        String function = expression.substring(start,start+3);
+                        simplifiedExpression += expression.substring(0, start);
+                        switch(function){
+                        case "sin":
+                            simplifiedExpression += Math.sin(evaluate(expression.substring(start+4, i)));
+                            break;
+                        case "log":
+                            simplifiedExpression += Math.log10(evaluate(expression.substring(start+4, i)));
+                            break;
+                        case "cos":
+                            simplifiedExpression += Math.cos(evaluate(expression.substring(start+4, i)));
+                            break;
+                        case "tan":
+                            simplifiedExpression += Math.tan(evaluate(expression.substring(start+4, i)));
+                            break;
+                        case "abs":
+                            simplifiedExpression += Math.abs(evaluate(expression.substring(start+4, i)));
+                            break;
+                        }
+                        simplifiedExpression += expression.substring(i+1);
+                        return evaluate(simplifiedExpression);
+                    }
+                }    
+            }
+            return evaluatePostfix(infixToPostfix(expression));
+	}
+        
+        public static void main(String[] args){
+            initPrecedence();
+            Scanner sc = new Scanner(System.in);
+            while(true){
+                String expression = sc.nextLine();
+                if(expression.equals("quit") || expression.equals("q"))
+                    break;
+                System.out.println("evaluation: "+evaluate(expression));
             }
         }
-        return s;
-    }/*
-    public static void main(String[] args){
-        //testing code
-        System.out.println("Default Test: ");
-        evaluate(trim("1+5*(9-11+(1+2)) * (192+342) / (213*231) + (2*(888-(-9+5)))"));
-        System.out.println("--------------------------------------------------------");
-        Scanner sc = new Scanner(System.in);
-        while(true){
-                recursionLevel = 0;
-                System.out.print("Testing: ");
-                System.out.println("Solution: "+evaluate(trim(sc.nextLine())));
-                System.out.println("--------------------------------------------------------");
-        }
-    }*//*
-    public static void main(String[] args){
-        //driver code for the GUI
-
-    }*/
 }

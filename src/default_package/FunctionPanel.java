@@ -11,6 +11,38 @@ import java.awt.Graphics2D.*;
  *
  * @author lx_user
  */
+
+public class FunctionPanel extends JPanel{
+    public static String function;
+    public static double lowerBoundY;
+    public static double upperBoundY;
+    public static double lowerBoundX;
+    public static double upperBoundX;
+    public static double resolution;
+    public static double x_coor;
+    public static double y_coor;
+    public static double scale;
+    public static boolean redrawFunction;   //lock redrawFunction to save time
+    public static void restoreDefaultSettings(){
+        function    = "";
+        lowerBoundY = -10.0;
+        lowerBoundX = -10.0;
+        upperBoundX = 10.0;
+        upperBoundY = 10.0;
+        resolution  = 0.02;
+        x_coor      = 0.0;
+        y_coor      = 0.0;
+        scale       = 1.0;
+        redrawFunction = true;
+        //redraw function must be set differently
+    }
+    public void paintComponent(Graphics g2){
+        Graphics2D g = (Graphics2D) g2;
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    }
+}
+
+/*
 public class FunctionPanel extends JPanel{
     static String function = "";
     static double lowerBoundY;
@@ -139,3 +171,4 @@ public class FunctionPanel extends JPanel{
         }
     }
 }
+*/

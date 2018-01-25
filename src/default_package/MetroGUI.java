@@ -13,17 +13,6 @@ import java.awt.event.KeyEvent;
  * @author lx_user
  */
 public class MetroGUI extends javax.swing.JFrame {
-
-    /**
-     * Creates new form SimpleAppForm
-     */
-    public MetroGUI() {
-        getContentPane().setBackground(new Color(51,59,84));            //set background color
-        initComponents();
-    }
-
-    static int x1=-1,x2=-1,y1=-1,y2=-1;
-    static boolean ips = false;
     /*
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -265,9 +254,9 @@ public class MetroGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void PlotButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PlotButtonMouseClicked
-        FunctionPanel.resize = true;
+        /*FunctionPanel.resize = true;
         Main.mainLoop(FunctionField.getText());
-        FunctionPanel.resize = false;
+        FunctionPanel.resize = false;*/
     }//GEN-LAST:event_PlotButtonMouseClicked
 
     private void FunctionFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FunctionFieldActionPerformed
@@ -283,30 +272,30 @@ public class MetroGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_formComponentResized
 
     private void MinusMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MinusMouseClicked
-        FunctionPanel.lowerBoundX *= 1.2;
+        /*FunctionPanel.lowerBoundX *= 1.2;
         FunctionPanel.upperBoundX *= 1.2;
         FunctionPanel.lowerBoundY *= 1.2;
         FunctionPanel.upperBoundY *= 1.2;
         FunctionPanel.resolution *= 1.2;
         FunctionPanel.scale *= 1.2;
         MetroGUI.window.getGraph().add(new FunctionPanel(),BorderLayout.CENTER);
-        MetroGUI.window.setVisible(true);
+        MetroGUI.window.setVisible(true);*/
     }//GEN-LAST:event_MinusMouseClicked
 
     private void ZoomMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ZoomMouseClicked
-        FunctionPanel.lowerBoundX /= 1.2;
+        /*FunctionPanel.lowerBoundX /= 1.2;
         FunctionPanel.upperBoundX /= 1.2;
         FunctionPanel.lowerBoundY /= 1.2;
         FunctionPanel.upperBoundY /= 1.2;
         FunctionPanel.resolution /= 1.2;
         FunctionPanel.scale /= 1.2;
         MetroGUI.window.getGraph().add(new FunctionPanel(),BorderLayout.CENTER);
-        MetroGUI.window.setVisible(true);
+        MetroGUI.window.setVisible(true);*/
     }//GEN-LAST:event_ZoomMouseClicked
     //FIX MOUSE DRAGGING BUG
     private void GraphMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_GraphMousePressed
-        y1 = evt.getY();
-        x1 = evt.getX();
+        /*y1 = evt.getY();
+        x1 = evt.getX();*/
     }//GEN-LAST:event_GraphMousePressed
 
     private void GraphMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_GraphMouseReleased
@@ -314,7 +303,7 @@ public class MetroGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_GraphMouseReleased
 
     private void GraphMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_GraphMouseDragged
-        x2 = evt.getX();
+        /*x2 = evt.getX();
         y2 = evt.getY();
         int x = x2 - x1;
         int y = y2 - y1;
@@ -327,20 +316,17 @@ public class MetroGUI extends javax.swing.JFrame {
         MetroGUI.window.getGraph().add(new FunctionPanel(),BorderLayout.CENTER);
         MetroGUI.window.setVisible(true);
         x1 = x2;
-        y1 = y2;
+        y1 = y2;*/
     }//GEN-LAST:event_GraphMouseDragged
 
     private void FunctionFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_FunctionFieldKeyPressed
-        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+        /*if(evt.getKeyCode() == KeyEvent.VK_ENTER){
             FunctionPanel.resize = true;
             Main.mainLoop(FunctionField.getText());
             FunctionPanel.resize = false;
-        }
+        }*/
     }//GEN-LAST:event_FunctionFieldKeyPressed
 
-    public static MetroGUI getWindow(){
-        return window;
-    }
     public JTextField getFunctionField(){
         return FunctionField;
     }
@@ -350,34 +336,11 @@ public class MetroGUI extends javax.swing.JFrame {
     public JPanel getPlotButton(){
         return PlotButton;
     }
-    /**
-     * @param args the command line arguments
-     */
+    public MetroGUI() {
+        getContentPane().setBackground(new Color(51,59,84));            //set background color
+        initComponents();
+    }
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MetroGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MetroGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MetroGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MetroGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
