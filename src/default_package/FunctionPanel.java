@@ -14,6 +14,7 @@ import java.awt.Graphics2D.*;
  */
 
 public class FunctionPanel extends JPanel{
+    
     public static String function;
     public static double lowerBoundY;
     public static double upperBoundY;
@@ -27,6 +28,7 @@ public class FunctionPanel extends JPanel{
     public static HashMap<Double, Double> map;
     public static Color plotColor;
     public static Color[] metroPalette = {new Color(239,244,255), new Color(255,196,13), new Color(45,137,239), new Color(0,171,169), new Color(255,0,151)};
+    
     public static void restoreDefaultSettings(){
         map = new HashMap<Double, Double>();
         function    = "";
@@ -42,6 +44,7 @@ public class FunctionPanel extends JPanel{
         plotColor = metroPalette[(int)(Math.random()*5)];
         //redraw function must be set differently
     }
+    
     public static void drawGuides(Graphics2D g, int width, int height){
         double x2Relative = (lowerBoundX - lowerBoundX) / (upperBoundX - lowerBoundX);
         double y2Relative = (0 - lowerBoundY) / (upperBoundY - lowerBoundY);
@@ -80,6 +83,7 @@ public class FunctionPanel extends JPanel{
             }
         }
     }
+    
     public void paintComponent(Graphics g2){
         Graphics2D g = (Graphics2D) g2;
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

@@ -11,7 +11,9 @@ import java.text.*;
  * @author lx_user
  */
 public class ExpressionSolver {
+    
 	static HashMap<String, Integer> opPrecedence = new HashMap<String, Integer>();
+        
 	public static void initPrecedence(){
 		opPrecedence.put("^", 4);
 		opPrecedence.put("*", 3);
@@ -21,6 +23,7 @@ public class ExpressionSolver {
 		opPrecedence.put(")", 1);
 		opPrecedence.put("(", 1);
 	}
+        
         public static String getTokenString(String expression){
                 String[] tokens = tokenize(expression);
                 String ret = "[ ";
@@ -28,6 +31,7 @@ public class ExpressionSolver {
                     ret += s + ", ";
                 return ret.substring(0,ret.length()-2)+" ]";
         }
+        
 	public static String[] tokenize(String expression){
 		ArrayList<String> tokens = new ArrayList<String>();
 		String[] output;
@@ -117,6 +121,7 @@ public class ExpressionSolver {
 		}
 		return output;
 	}
+        
 	public static String infixToPostfix(String expression){
                 if(expression == "") //empty string
                     return "";
@@ -145,6 +150,7 @@ public class ExpressionSolver {
 			ret += operationStack.pop() + " ";
 		return ret;
 	}
+        
 	public static double evaluatePostfix(String expression){
                 if(expression == "")
                     return 0;
@@ -184,6 +190,7 @@ public class ExpressionSolver {
 		}
 		return (double)operandStack.pop();
 	}
+        
         public static boolean hasFunction(String expression){
             return expression.contains("log")   ||
                    expression.contains("sin")   ||
@@ -196,6 +203,7 @@ public class ExpressionSolver {
                     */
             ;
         }
+        
         public static boolean isOperator(char c){
             return c == '^' ||
                    c == '*' ||
@@ -203,20 +211,40 @@ public class ExpressionSolver {
                    c == '-' ||
                    c == '+';
         }
+        
+        public static boolean isTerm2(char c){
+            return c == '(' ||
+                   c == '[' || 
+                   (c - 'a' < 26 && c - 'a' >= 0);
+        }
+        
+        public static boolean isTerm1(char c){
+            return c == ')' ||
+                   c == ']' || 
+                   (c - '0' <= 9 && c - '0' >= 0);
+        }
+        
         public static String getImplicitMultiplication(String expression){
-            //lets add this later as it is not very nessary
-            if(expression == "")
-                return "";
-            String ret = ""+expression.charAt(0);
-            for(int i = 1; i < expression.length(); i++){
-                if((expression.charAt(i) == '(' || expression.charAt(i) == 'x') && !isOperator(expression.charAt(i-1)))
-                    ret += "*(";
-                else
-                    ret += expression.charAt(i);
-            }
+            String ret = expression;
+            boolean scanned = false;
+            do{
+                scanned = false;
+                for(int i = 1; i < ret.length(); i++){
+                    if(isTerm2(ret.charAt(i)) && isTerm1(ret.charAt(i-1)) || isTerm1(ret.charAt(i-1)) && isTerm2(ret.charAt(i))){
+                        ret = ret.substring(0,i) + "*" + ret.substring(i);
+                        scanned = true;
+                        break;
+                    }
+                }
+            } while(scanned);
             return ret;
         }
-	public static double evaluate(String expression){
+        
+        public static double evaluate(String expression){
+            return evaluateUtil(getImplicitMultiplication(expression));
+        }
+        
+	private static double evaluateUtil(String expression){
             while(hasFunction(expression)){
                 int start = 0;
                 Stack<Integer> bracketStack = new Stack<Integer>();

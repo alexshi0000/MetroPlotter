@@ -267,6 +267,7 @@ public class MetroGUI extends javax.swing.JFrame implements ComponentListener{
         String userInput = FunctionField.getText();
         FunctionPanel.function = userInput;
         FunctionPanel.redrawFunction = true;
+        FunctionPanel.restoreDefaultSettings();
         updateUI();
     }//GEN-LAST:event_PlotButtonMouseClicked
 
@@ -284,7 +285,7 @@ public class MetroGUI extends javax.swing.JFrame implements ComponentListener{
 
     int zoom = 0;
     private void MinusMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MinusMouseClicked
-        if(zoom >= -10){
+        if(zoom >= -12){
             FunctionPanel.lowerBoundX *= 1.2;
             FunctionPanel.upperBoundX *= 1.2;
             FunctionPanel.lowerBoundY *= 1.2;
@@ -297,7 +298,7 @@ public class MetroGUI extends javax.swing.JFrame implements ComponentListener{
     }//GEN-LAST:event_MinusMouseClicked
 
     private void ZoomMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ZoomMouseClicked
-        if(zoom <= 10){    
+        if(zoom <= 12){    
             FunctionPanel.lowerBoundX /= 1.2;
             FunctionPanel.upperBoundX /= 1.2;
             FunctionPanel.lowerBoundY /= 1.2;
