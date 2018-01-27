@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package default_package;
+import java.util.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.Graphics2D.*;
@@ -23,18 +24,61 @@ public class FunctionPanel extends JPanel{
     public static double y_coor;
     public static double scale;
     public static boolean redrawFunction;   //lock redrawFunction to save time
+    public static HashMap<Double, Double> map;
+    public static Color plotColor;
+    public static Color[] metroPalette = {new Color(239,244,255), new Color(255,196,13), new Color(45,137,239), new Color(0,171,169), new Color(255,0,151)};
     public static void restoreDefaultSettings(){
+        map = new HashMap<Double, Double>();
         function    = "";
-        lowerBoundY = -10.0;
-        lowerBoundX = -10.0;
-        upperBoundX = 10.0;
-        upperBoundY = 10.0;
-        resolution  = 0.02;
+        lowerBoundY = -5.0;
+        lowerBoundX = -5.0;
+        upperBoundX = 5.0;
+        upperBoundY = 5.0;
+        scale       = 1;
         x_coor      = 0.0;
         y_coor      = 0.0;
-        scale       = 0.01;
+        resolution  = 0.02;
         redrawFunction = false;
+        plotColor = metroPalette[(int)(Math.random()*5)];
         //redraw function must be set differently
+    }
+    public static void drawGuides(Graphics2D g, int width, int height){
+        double x2Relative = (lowerBoundX - lowerBoundX) / (upperBoundX - lowerBoundX);
+        double y2Relative = (0 - lowerBoundY) / (upperBoundY - lowerBoundY);
+        double x1Relative = (upperBoundX - lowerBoundX) / (upperBoundX - lowerBoundX);
+        double y1Relative = (0 - lowerBoundY) / (upperBoundY - lowerBoundY);
+        g.drawLine((int)(x1Relative * (double)width), (int)((double)height - y1Relative * (double)height), 
+                        (int)(x2Relative * (double)width), (int)((double)height - y2Relative * (double)height)
+                    );
+        
+        x2Relative = (0 - lowerBoundX) / (upperBoundX - lowerBoundX);
+        y2Relative = (lowerBoundY - lowerBoundY) / (upperBoundY - lowerBoundY);
+        x1Relative = (0 - lowerBoundX) / (upperBoundX - lowerBoundX);
+        y1Relative = (upperBoundY - lowerBoundY) / (upperBoundY - lowerBoundY);
+        g.drawLine((int)(x1Relative * (double)width), (int)((double)height - y1Relative * (double)height), 
+                        (int)(x2Relative * (double)width), (int)((double)height - y2Relative * (double)height)
+                    );
+        for(int x = (int)lowerBoundX; x < Math.round(upperBoundX); x ++){
+            if(x % scale == 0){
+                x2Relative = (x - lowerBoundX) / (upperBoundX - lowerBoundX);
+                y2Relative = (0.1 - lowerBoundY) / (upperBoundY - lowerBoundY);
+                x1Relative = (x - lowerBoundX) / (upperBoundX - lowerBoundX);
+                y1Relative = (-0.1 - lowerBoundY) / (upperBoundY - lowerBoundY);
+                g.drawLine((int)(x1Relative * (double)width), (int)((double)height - y1Relative * (double)height), 
+                                (int)(x2Relative * (double)width), (int)((double)height - y2Relative * (double)height));
+            }
+        }
+        
+        for(int y = (int)lowerBoundY; y < Math.round(upperBoundY); y ++){
+            if(y % scale == 0){
+                x2Relative = (0.1 - lowerBoundX) / (upperBoundX - lowerBoundX);
+                y2Relative = (y - lowerBoundY) / (upperBoundY - lowerBoundY);
+                x1Relative = (-0.1 - lowerBoundX) / (upperBoundX - lowerBoundX);
+                y1Relative = (y - lowerBoundY) / (upperBoundY - lowerBoundY);
+                g.drawLine((int)(x1Relative * (double)width), (int)((double)height - y1Relative * (double)height), 
+                                (int)(x2Relative * (double)width), (int)((double)height - y2Relative * (double)height));
+            }
+        }
     }
     public void paintComponent(Graphics g2){
         Graphics2D g = (Graphics2D) g2;
@@ -42,8 +86,11 @@ public class FunctionPanel extends JPanel{
         g.setColor(new Color(51,59,84));
         g.fillRect(0, 0, this.getWidth(), this.getHeight());
         g.setColor(new Color(170,64,255));
-        g.drawLine(0, this.getHeight()/2, this.getWidth(), this.getHeight()/2);
-        g.drawLine(this.getWidth()/2, 0, this.getWidth()/2, this.getHeight());
+        //draw the fucking guides
+        drawGuides(g,  this.getWidth(), this.getHeight());
+        //g.drawLine(0, this.getHeight()/2, this.getWidth(), this.getHeight()/2);
+        //g.drawLine(this.getWidth()/2, 0, this.getWidth()/2, this.getHeight());
+        g.setColor(plotColor);
         if(!redrawFunction || function.contains("function"))
             return;
         redrawFunction = false;
@@ -56,28 +103,43 @@ public class FunctionPanel extends JPanel{
                 String expression = "";
                 for(int i = 0; i < function.length(); i++){
                     if(function.charAt(i) == 'x'){
-                        expression += x2;
+                        expression += "["+x2+"]";
                     }
                     else{
                         expression += function.charAt(i);
                     }
                 }
                 y2 = ExpressionSolver.evaluate(expression);
+                if(Double.isNaN(y2)){
+                    y1 = y2;
+                    x1 = x2;
+                    x2 += resolution;
+                    continue;
+                }
             }catch(Exception e){
-                System.out.println(e);
+                y1 = y2;
+                x1 = x2;
+                x2 += resolution;
+                continue;
+            }
+            if(y1 - y2 > 100){
+                x1 = x2;
+                y1 = y2;
+                x2 += resolution;
+                continue;
             }
             // FUNCTION DRAW CODE STARTS HERE
             double x2Relative = (x2 - lowerBoundX) / (upperBoundX - lowerBoundX);
             double y2Relative = (y2 - lowerBoundY) / (upperBoundY - lowerBoundY);
-            double x1Relative = (x2 - lowerBoundX) / (upperBoundX - lowerBoundX);
-            double y1Relative = (y2 - lowerBoundY) / (upperBoundY - lowerBoundY);
+            double x1Relative = (x1 - lowerBoundX) / (upperBoundX - lowerBoundX);
+            double y1Relative = (y1 - lowerBoundY) / (upperBoundY - lowerBoundY);
             g.drawLine((int)(x1Relative * (double)this.getWidth()), (int)((double)this.getHeight() - y1Relative * (double)this.getHeight()), 
                         (int)(x2Relative * (double)this.getWidth()), (int)((double)this.getHeight() - y2Relative * (double)this.getHeight())
                     );
             // FUNCTION DRAW CODE ENDS HERE
             x1 = x2;
             y1 = y2;
-            x2 += scale;
+            x2 += resolution;
         }
     }
 }
@@ -92,7 +154,7 @@ public class FunctionPanel extends JPanel{
     static double resolution;
     static double setX = 0;
     static double setY = 0;
-    static double scale;
+    static double resolution;
     static boolean resize = true;
     public static void setFunction(String f){
         function = f;
@@ -124,7 +186,7 @@ public class FunctionPanel extends JPanel{
                         this.getHeight());
                         
                         
-            xStart += scale;
+            xStart += resolution;
         }
         xStart = ((upperBoundX-lowerBoundX)/2);
         while(xStart >= lowerBoundX){
@@ -134,7 +196,7 @@ public class FunctionPanel extends JPanel{
                         this.getHeight());
                         
                         
-            xStart -= scale;
+            xStart -= resolution;
         }
         //
         while(yStart <= upperBoundY){
@@ -145,7 +207,7 @@ public class FunctionPanel extends JPanel{
                         (int)Math.round(this.getHeight() - ((yStart-lowerBoundY)/(upperBoundY-lowerBoundY)) * this.getHeight()));
                         
                         
-            yStart += scale;
+            yStart += resolution;
         }
         yStart = ((upperBoundY-lowerBoundY)/2);
         while(yStart >= lowerBoundY){
@@ -156,7 +218,7 @@ public class FunctionPanel extends JPanel{
                         (int)Math.round(this.getHeight() - ((yStart-lowerBoundY)/(upperBoundY-lowerBoundY)) * this.getHeight()));
                         
                         
-            yStart -= scale;
+            yStart -= resolution;
         }
         if(!resize){
             System.out.println();

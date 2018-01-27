@@ -282,31 +282,37 @@ public class MetroGUI extends javax.swing.JFrame implements ComponentListener{
         PlotButtonMouseClicked(null);
     }//GEN-LAST:event_formComponentResized
 
+    int zoom = 0;
     private void MinusMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MinusMouseClicked
-        /*FunctionPanel.lowerBoundX *= 1.2;
-        FunctionPanel.upperBoundX *= 1.2;
-        FunctionPanel.lowerBoundY *= 1.2;
-        FunctionPanel.upperBoundY *= 1.2;
-        FunctionPanel.resolution *= 1.2;
-        FunctionPanel.scale *= 1.2;
-        MetroGUI.window.getGraph().add(new FunctionPanel(),BorderLayout.CENTER);
-        MetroGUI.window.setVisible(true);*/
+        if(zoom >= -10){
+            FunctionPanel.lowerBoundX *= 1.2;
+            FunctionPanel.upperBoundX *= 1.2;
+            FunctionPanel.lowerBoundY *= 1.2;
+            FunctionPanel.upperBoundY *= 1.2;
+            FunctionPanel.resolution /= 1.2;
+            FunctionPanel.redrawFunction = true;
+            updateUI();
+            zoom--;
+        }
     }//GEN-LAST:event_MinusMouseClicked
 
     private void ZoomMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ZoomMouseClicked
-        /*FunctionPanel.lowerBoundX /= 1.2;
-        FunctionPanel.upperBoundX /= 1.2;
-        FunctionPanel.lowerBoundY /= 1.2;
-        FunctionPanel.upperBoundY /= 1.2;
-        FunctionPanel.resolution /= 1.2;
-        FunctionPanel.scale /= 1.2;
-        MetroGUI.window.getGraph().add(new FunctionPanel(),BorderLayout.CENTER);
-        MetroGUI.window.setVisible(true);*/
+        if(zoom <= 10){    
+            FunctionPanel.lowerBoundX /= 1.2;
+            FunctionPanel.upperBoundX /= 1.2;
+            FunctionPanel.lowerBoundY /= 1.2;
+            FunctionPanel.upperBoundY /= 1.2;
+            FunctionPanel.resolution *= 1.2;
+            FunctionPanel.redrawFunction = true;
+            updateUI();
+            zoom++;
+        }
     }//GEN-LAST:event_ZoomMouseClicked
     //FIX MOUSE DRAGGING BUG
+    double y1 = 0, x1 = 0, x2 = 0, y2 = 0;
     private void GraphMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_GraphMousePressed
-        /*y1 = evt.getY();
-        x1 = evt.getX();*/
+        y1 = evt.getY();
+        x1 = evt.getX();
     }//GEN-LAST:event_GraphMousePressed
 
     private void GraphMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_GraphMouseReleased
@@ -314,20 +320,20 @@ public class MetroGUI extends javax.swing.JFrame implements ComponentListener{
     }//GEN-LAST:event_GraphMouseReleased
 
     private void GraphMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_GraphMouseDragged
-        /*x2 = evt.getX();
+        x2 = evt.getX();
         y2 = evt.getY();
-        int x = x2 - x1;
-        int y = y2 - y1;
-        FunctionPanel.setY += ((double)y/Graph.getHeight()) *Math.abs((FunctionPanel.lowerBoundY-FunctionPanel.upperBoundY));
-        FunctionPanel.setX += ((double)x/Graph.getWidth()) *Math.abs((FunctionPanel.upperBoundX-FunctionPanel.lowerBoundX));
-        FunctionPanel.lowerBoundY += ((double)y/Graph.getHeight()) *Math.abs((FunctionPanel.lowerBoundY-FunctionPanel.upperBoundY));
-        FunctionPanel.upperBoundY += ((double)y/Graph.getHeight()) *Math.abs((FunctionPanel.lowerBoundY-FunctionPanel.upperBoundY));
-        FunctionPanel.lowerBoundX -= ((double)x/Graph.getWidth()) *Math.abs((FunctionPanel.upperBoundX-FunctionPanel.lowerBoundX));
-        FunctionPanel.upperBoundX -= ((double)x/Graph.getWidth()) *Math.abs((FunctionPanel.upperBoundX-FunctionPanel.lowerBoundX));
-        MetroGUI.window.getGraph().add(new FunctionPanel(),BorderLayout.CENTER);
-        MetroGUI.window.setVisible(true);
+        double x = x2 - x1;
+        double y = y2 - y1;
+        x *= 0.32;
+        y *= 0.32;
+        FunctionPanel.lowerBoundY += ((double)y/(double)Graph.getHeight()) *Math.abs((FunctionPanel.lowerBoundY-FunctionPanel.upperBoundY));
+        FunctionPanel.upperBoundY += ((double)y/(double)Graph.getHeight()) *Math.abs((FunctionPanel.lowerBoundY-FunctionPanel.upperBoundY));
+        FunctionPanel.lowerBoundX -= ((double)x/(double)Graph.getWidth()) *Math.abs((FunctionPanel.upperBoundX-FunctionPanel.lowerBoundX));
+        FunctionPanel.upperBoundX -= ((double)x/(double)Graph.getWidth()) *Math.abs((FunctionPanel.upperBoundX-FunctionPanel.lowerBoundX));
+        FunctionPanel.redrawFunction = true;
+        updateUI();
+        y1 = y2;
         x1 = x2;
-        y1 = y2;*/
     }//GEN-LAST:event_GraphMouseDragged
 
     private void FunctionFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_FunctionFieldKeyPressed
@@ -356,8 +362,8 @@ public class MetroGUI extends javax.swing.JFrame implements ComponentListener{
     public static void main(String args[]) {
         ExpressionSolver.initPrecedence();   //init the shit
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
+        java.awt.EventQueue.invokeLater(new Runnable(){
+            public void run(){
                 FunctionPanel.restoreDefaultSettings();
                 window = new MetroGUI();
                 window.Graph.setLayout(new BorderLayout());

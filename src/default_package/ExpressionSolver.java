@@ -82,6 +82,18 @@ public class ExpressionSolver {
 			case ' ':
 				//remove whitespace
 				break;
+                        case '[':
+                                String scientificNotation = "";
+                                for(int j = i+1; j < expression.length(); j++){
+                                    if(expression.charAt(j) == ']'){
+                                        i = j;
+                                        break;
+                                    }
+                                    scientificNotation += expression.charAt(j);
+                                }
+                                tokens.add(scientificNotation);
+                                prevWasOperator = false;
+                                break;
 			default:	//alphanumeric characters
 				if(tokens.size() < 1)
 					tokens.add("");
@@ -220,7 +232,7 @@ public class ExpressionSolver {
                     start = expression.indexOf("abs");
                 for(int i = start+3; i < expression.length(); i++){
                     if (expression.charAt(i) == '(')
-                        bracketStack.push(i);
+                        bracketStack.push(i);   
                     else if (expression.charAt(i) == ')')
                         bracketStack.pop();
                     if(bracketStack.isEmpty()){
