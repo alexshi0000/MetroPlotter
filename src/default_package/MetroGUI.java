@@ -264,10 +264,10 @@ public class MetroGUI extends javax.swing.JFrame implements ComponentListener{
         /*FunctionPanel.resize = true;
         Main.mainLoop(FunctionField.getText());
         FunctionPanel.resize = false;*/
+        FunctionPanel.restoreDefaultSettings();
         String userInput = FunctionField.getText();
         FunctionPanel.function = userInput;
         FunctionPanel.redrawFunction = true;
-        FunctionPanel.restoreDefaultSettings();
         updateUI();
     }//GEN-LAST:event_PlotButtonMouseClicked
 

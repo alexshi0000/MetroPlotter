@@ -41,7 +41,7 @@ public class FunctionPanel extends JPanel{
         y_coor      = 0.0;
         resolution  = 0.02;
         redrawFunction = false;
-        plotColor = metroPalette[(int)(Math.random()*5)];
+        plotColor = metroPalette[(int)(2)];
         //redraw function must be set differently
     }
     
