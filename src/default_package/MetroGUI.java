@@ -8,11 +8,13 @@ import javax.swing.*;
 import java.util.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.ComponentEvent;
 /**
  *
  * @author lx_user
  */
-public class MetroGUI extends javax.swing.JFrame {
+public class MetroGUI extends javax.swing.JFrame implements ComponentListener{
     /*
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -208,7 +210,7 @@ public class MetroGUI extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 150, 73));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel3.setText("     MetroPlotter 0.1V");
+        jLabel3.setText("     MetroPlotter 0.2V");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -253,10 +255,19 @@ public class MetroGUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void updateUI(){
+        window.Graph.add(new FunctionPanel(),BorderLayout.CENTER);
+        window.setVisible(true);
+    }
+    
     private void PlotButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PlotButtonMouseClicked
         /*FunctionPanel.resize = true;
         Main.mainLoop(FunctionField.getText());
         FunctionPanel.resize = false;*/
+        String userInput = FunctionField.getText();
+        FunctionPanel.function = userInput;
+        FunctionPanel.redrawFunction = true;
+        updateUI();
     }//GEN-LAST:event_PlotButtonMouseClicked
 
     private void FunctionFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FunctionFieldActionPerformed
@@ -320,11 +331,13 @@ public class MetroGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_GraphMouseDragged
 
     private void FunctionFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_FunctionFieldKeyPressed
-        /*if(evt.getKeyCode() == KeyEvent.VK_ENTER){
-            FunctionPanel.resize = true;
-            Main.mainLoop(FunctionField.getText());
-            FunctionPanel.resize = false;
-        }*/
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+            String userInput = FunctionField.getText();
+            FunctionPanel.restoreDefaultSettings();
+            FunctionPanel.function = userInput;
+            FunctionPanel.redrawFunction = true;
+            updateUI();
+        }
     }//GEN-LAST:event_FunctionFieldKeyPressed
 
     public JTextField getFunctionField(){
@@ -341,9 +354,11 @@ public class MetroGUI extends javax.swing.JFrame {
         initComponents();
     }
     public static void main(String args[]) {
+        ExpressionSolver.initPrecedence();   //init the shit
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+                FunctionPanel.restoreDefaultSettings();
                 window = new MetroGUI();
                 window.Graph.setLayout(new BorderLayout());
                 window.Graph.add(new FunctionPanel(),BorderLayout.CENTER);
@@ -351,6 +366,18 @@ public class MetroGUI extends javax.swing.JFrame {
                 window.setVisible(true);
             }
         });
+    }
+    public void componentResized(ComponentEvent e){
+        updateUI();
+    }
+    public void componentHidden(ComponentEvent e){
+        updateUI();
+    }
+    public void componentShown(ComponentEvent e){
+        updateUI();
+    }
+    public void componentMoved(ComponentEvent e){
+        updateUI();
     }
     public static MetroGUI window;
     // Variables declaration - do not modify//GEN-BEGIN:variables

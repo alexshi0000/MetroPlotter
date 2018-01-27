@@ -192,6 +192,7 @@ public class ExpressionSolver {
                    c == '+';
         }
         public static String getImplicitMultiplication(String expression){
+            //lets add this later as it is not very nessary
             if(expression == "")
                 return "";
             String ret = ""+expression.charAt(0);
@@ -204,7 +205,6 @@ public class ExpressionSolver {
             return ret;
         }
 	public static double evaluate(String expression){
-            expression = getImplicitMultiplication(expression);
             while(hasFunction(expression)){
                 int start = 0;
                 Stack<Integer> bracketStack = new Stack<Integer>();
@@ -251,7 +251,7 @@ public class ExpressionSolver {
             }
             return evaluatePostfix(infixToPostfix(expression));
 	}
-        
+        /*
         public static void main(String[] args){
             initPrecedence();
             Scanner sc = new Scanner(System.in);
@@ -261,5 +261,5 @@ public class ExpressionSolver {
                     break;
                 System.out.println("evaluation: "+evaluate(expression));
             }
-        }
+        }*/
 }

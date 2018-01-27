@@ -32,13 +32,53 @@ public class FunctionPanel extends JPanel{
         resolution  = 0.02;
         x_coor      = 0.0;
         y_coor      = 0.0;
-        scale       = 1.0;
-        redrawFunction = true;
+        scale       = 0.01;
+        redrawFunction = false;
         //redraw function must be set differently
     }
     public void paintComponent(Graphics g2){
         Graphics2D g = (Graphics2D) g2;
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setColor(new Color(51,59,84));
+        g.fillRect(0, 0, this.getWidth(), this.getHeight());
+        g.setColor(new Color(170,64,255));
+        g.drawLine(0, this.getHeight()/2, this.getWidth(), this.getHeight()/2);
+        g.drawLine(this.getWidth()/2, 0, this.getWidth()/2, this.getHeight());
+        if(!redrawFunction || function.contains("function"))
+            return;
+        redrawFunction = false;
+        double x1 = -1e30;
+        double x2 = lowerBoundX;
+        double y1 = -1e30;
+        double y2 = -1e30;
+        while(x2 <= upperBoundX){
+            try{
+                String expression = "";
+                for(int i = 0; i < function.length(); i++){
+                    if(function.charAt(i) == 'x'){
+                        expression += x2;
+                    }
+                    else{
+                        expression += function.charAt(i);
+                    }
+                }
+                y2 = ExpressionSolver.evaluate(expression);
+            }catch(Exception e){
+                System.out.println(e);
+            }
+            // FUNCTION DRAW CODE STARTS HERE
+            double x2Relative = (x2 - lowerBoundX) / (upperBoundX - lowerBoundX);
+            double y2Relative = (y2 - lowerBoundY) / (upperBoundY - lowerBoundY);
+            double x1Relative = (x2 - lowerBoundX) / (upperBoundX - lowerBoundX);
+            double y1Relative = (y2 - lowerBoundY) / (upperBoundY - lowerBoundY);
+            g.drawLine((int)(x1Relative * (double)this.getWidth()), (int)((double)this.getHeight() - y1Relative * (double)this.getHeight()), 
+                        (int)(x2Relative * (double)this.getWidth()), (int)((double)this.getHeight() - y2Relative * (double)this.getHeight())
+                    );
+            // FUNCTION DRAW CODE ENDS HERE
+            x1 = x2;
+            y1 = y2;
+            x2 += scale;
+        }
     }
 }
 

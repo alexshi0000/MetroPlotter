@@ -338,7 +338,7 @@
           <Color blue="49" green="96" red="ff" type="rgb"/>
         </Property>
         <Property name="horizontalAlignment" type="int" value="2"/>
-        <Property name="text" type="java.lang.String" value="     MetroPlotter 0.1V"/>
+        <Property name="text" type="java.lang.String" value="     MetroPlotter 0.2V"/>
       </Properties>
     </Component>
   </SubComponents>
