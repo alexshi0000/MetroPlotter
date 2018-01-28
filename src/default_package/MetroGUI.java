@@ -288,7 +288,7 @@ public class MetroGUI extends javax.swing.JFrame implements ComponentListener{
             FunctionPanel.upperBoundX *= 1.2;
             FunctionPanel.lowerBoundY *= 1.2;
             FunctionPanel.upperBoundY *= 1.2;
-            FunctionPanel.resolution /= 1.2;
+            FunctionPanel.resolution *= 1.2;
             FunctionPanel.redrawFunction = true;
             updateUI();
     }//GEN-LAST:event_MinusMouseClicked
@@ -298,7 +298,7 @@ public class MetroGUI extends javax.swing.JFrame implements ComponentListener{
             FunctionPanel.upperBoundX /= 1.2;
             FunctionPanel.lowerBoundY /= 1.2;
             FunctionPanel.upperBoundY /= 1.2;
-            FunctionPanel.resolution *= 1.2;
+            FunctionPanel.resolution /= 1.2;
             FunctionPanel.redrawFunction = true;
             updateUI();
     }//GEN-LAST:event_ZoomMouseClicked
@@ -318,8 +318,12 @@ public class MetroGUI extends javax.swing.JFrame implements ComponentListener{
         y2 = evt.getY();
         double x = x2 - x1;
         double y = y2 - y1;
-        x *= 0.32;
-        y *= 0.32;
+        x *= 0.35;
+        y *= 0.35;
+        if(x > 60)
+            x = 60;
+        if(y > 60)
+            y = 60;
         FunctionPanel.lowerBoundY += ((double)y/(double)Graph.getHeight()) *Math.abs((FunctionPanel.lowerBoundY-FunctionPanel.upperBoundY));
         FunctionPanel.upperBoundY += ((double)y/(double)Graph.getHeight()) *Math.abs((FunctionPanel.lowerBoundY-FunctionPanel.upperBoundY));
         FunctionPanel.lowerBoundX -= ((double)x/(double)Graph.getWidth()) *Math.abs((FunctionPanel.upperBoundX-FunctionPanel.lowerBoundX));

@@ -114,7 +114,7 @@ public class FunctionPanel extends JPanel{
                     }
                 }
                 y2 = ExpressionSolver.evaluate(expression);
-                if(Double.isNaN(y2)){
+                if(Double.isNaN(y2) || Double.isNaN(y1)){
                     y1 = y2;
                     x1 = x2;
                     x2 += resolution;
