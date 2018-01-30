@@ -16,6 +16,15 @@ public class PointOfInterest {
     private double x, y;
     private String description, hiddenDescription;
     
+    public static void resetPointsOfInterest(){
+        FunctionPanel.drawPOI = true;
+        arr.clear();
+    }
+    
+    public static void addPointOfInterest(PointOfInterest p){
+        arr.add(p);
+    }
+    
     public PointOfInterest(double x, double y, String description, String hiddenDescription){
         this.x = x;
         this.y = y;

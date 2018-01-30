@@ -10,11 +10,13 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseListener;
+import java.awt.evene.MouseEvent;
 /**
  *
  * @author lx_user
  */
-public class MetroGUI extends javax.swing.JFrame implements ComponentListener{
+public class MetroGUI extends javax.swing.JFrame implements ComponentListener, MouseListener{
     /*
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -255,6 +257,26 @@ public class MetroGUI extends javax.swing.JFrame implements ComponentListener{
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public void mousePressed(MouseEvent e) {
+       
+    }
+
+    public void mouseReleased(MouseEvent e) {
+       
+    }
+
+    public void mouseEntered(MouseEvent e) {
+       
+    }
+
+    public void mouseExited(MouseEvent e) {
+       
+    }
+
+    public void mouseClicked(MouseEvent e) {
+       
+    }
+    
     private void updateUI(){
         window.Graph.add(new FunctionPanel(),BorderLayout.CENTER);
         window.setVisible(true);
@@ -291,6 +313,7 @@ public class MetroGUI extends javax.swing.JFrame implements ComponentListener{
             FunctionPanel.resolution *= 1.2;
             FunctionPanel.redrawFunction = true;
             updateUI();
+            PointOfInterest.resetPointsOfInterest();
     }//GEN-LAST:event_MinusMouseClicked
 
     private void ZoomMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ZoomMouseClicked
@@ -301,6 +324,7 @@ public class MetroGUI extends javax.swing.JFrame implements ComponentListener{
             FunctionPanel.resolution /= 1.2;
             FunctionPanel.redrawFunction = true;
             updateUI();
+            PointOfInterest.resetPointsOfInterest();
     }//GEN-LAST:event_ZoomMouseClicked
     //FIX MOUSE DRAGGING BUG
     double y1 = 0, x1 = 0, x2 = 0, y2 = 0;
@@ -318,8 +342,8 @@ public class MetroGUI extends javax.swing.JFrame implements ComponentListener{
         y2 = evt.getY();
         double x = x2 - x1;
         double y = y2 - y1;
-        x *= 0.35;
-        y *= 0.35;
+        x *= 0.4;
+        y *= 0.4;
         if(x > 60)
             x = 60;
         if(y > 60)
@@ -332,6 +356,7 @@ public class MetroGUI extends javax.swing.JFrame implements ComponentListener{
         updateUI();
         y1 = y2;
         x1 = x2;
+        PointOfInterest.resetPointsOfInterest();
     }//GEN-LAST:event_GraphMouseDragged
 
     private void FunctionFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_FunctionFieldKeyPressed

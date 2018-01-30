@@ -24,25 +24,26 @@ public class FunctionPanel extends JPanel{
     public static double x_coor;
     public static double y_coor;
     public static double scale;
-    public static boolean redrawFunction;   //lock redrawFunction to save time
+    public static boolean redrawFunction, drawPOI;   //lock redrawFunction to save time
     public static HashMap<Double, Double> map;
     public static Color plotColor;
     public static Color[] metroPalette = {new Color(239,244,255), new Color(255,196,13), new Color(45,137,239), new Color(0,171,169), new Color(255,0,151)};
-    public static final double DEFAULT_RES = 0.025;
+    public static final double DEFAULT_RES = 0.02;
     
     public static void restoreDefaultSettings(){
         map = new HashMap<Double, Double>();
-        function    = "";
-        lowerBoundY = -5.0;
-        lowerBoundX = -5.0;
-        upperBoundX = 5.0;
-        upperBoundY = 5.0;
-        scale       = 1;
-        x_coor      = 0.0;
-        y_coor      = 0.0;
-        resolution  = DEFAULT_RES;
+        function       = "";
+        lowerBoundY    = -5.0;
+        lowerBoundX    = -5.0;
+        upperBoundX    = 5.0;
+        upperBoundY    = 5.0;
+        scale          = 1;
+        x_coor         = 0.0;
+        y_coor         = 0.0;
+        resolution     = DEFAULT_RES;
         redrawFunction = false;
-        plotColor = metroPalette[(int)(2)];
+        plotColor      = metroPalette[(int)(2)];
+        drawPOI        = true;
         //redraw function must be set differently
     }
 
@@ -154,7 +155,8 @@ public class FunctionPanel extends JPanel{
             if(downward && y2-y1 > 0){
                 //local min, we add this so we can use it later with a mouse
                 String label = String.format("(%.2f, %.2f)", x1, y1);
-                PointOfInterest.arr.add(new PointOfInterest(x1, y1, "local min", label));
+                if(drawPOI)
+                    PointOfInterest.addPointOfInterest(new PointOfInterest(x1, y1, "local min", label));
                 x1Relative = (x1 - lowerBoundX) / (upperBoundX - lowerBoundX);
                 y1Relative = (y1 - lowerBoundY) / (upperBoundY - lowerBoundY);
                 g.fillOval((int) Math.round(x1Relative * (double)this.getWidth()) -4, (int) Math.round((double)this.getHeight() - y1Relative *
@@ -165,25 +167,10 @@ public class FunctionPanel extends JPanel{
             }
             else if(upward && y2-y1 < 0){
                 String label = String.format("(%.2f, %.2f)", x1, y1);
-                PointOfInterest.arr.add(new PointOfInterest(x1, y1, "local max", label));
+                if(drawPOI)
+                    PointOfInterest.addPointOfInterest(new PointOfInterest(x1, y1, "local max", label));
                 x1Relative = (x1 - lowerBoundX) / (upperBoundX - lowerBoundX);
                 y1Relative = (y1 - lowerBoundY) / (upperBoundY - lowerBoundY);
-                g.fillOval((int) Math.round(x1Relative * (double)this.getWidth()) -4, (int) Math.round((double)this.getHeight() - y1Relative *
-                                                                        (double)this.getHeight()) - 4, 8, 8);
-            }
-            else if(negative && y2 > 0){
-                String label = String.format("(%.2f, %.2f)", x1, y1);
-                PointOfInterest.arr.add(new PointOfInterest(x1, y1, "root positive", label));
-                x1Relative = ((x1+x2)/2.0 - lowerBoundX) / (upperBoundX - lowerBoundX);
-                y1Relative = ((y1+y2)/2.0 - lowerBoundY) / (upperBoundY - lowerBoundY);
-                g.fillOval((int) Math.round(x1Relative * (double)this.getWidth()) -4, (int) Math.round((double)this.getHeight() - y1Relative *
-                                                                        (double)this.getHeight()) - 4, 8, 8);
-            }
-            else if(positive && y2 < 0){
-                String label = String.format("(%.2f, %.2f)", x1, y1);
-                PointOfInterest.arr.add(new PointOfInterest(x1, y1, "root negative", label));
-                x1Relative = ((x1+x2)/2.0 - lowerBoundX) / (upperBoundX - lowerBoundX);
-                y1Relative = ((y1+y2)/2.0 - lowerBoundY) / (upperBoundY - lowerBoundY);
                 g.fillOval((int) Math.round(x1Relative * (double)this.getWidth()) -4, (int) Math.round((double)this.getHeight() - y1Relative *
                                                                         (double)this.getHeight()) - 4, 8, 8);
             }
@@ -192,15 +179,12 @@ public class FunctionPanel extends JPanel{
             upward   = y2-y1 > 0;
             negative = y2 < 0;
             positive  = y2 > 0;
-            // POINTS OF INTEREST ENDS HERE
+            // POINTS OF INTEREST ENDS HERE ==========================================================
             
             //SCALE ADJUSTMENT STARTS HERE
             
-            if(y2 - y1 > 9){
-                resolution = DEFAULT_RES * 0.5;
-            }
-            else if(y2 - y1 > 30){
-                resolution = DEFAULT_RES * 0.25;
+            if(Math.abs(y2 - y1)/Math.abs(x2-x1) > 30){
+                resolution = DEFAULT_RES * 0.01;
             }
             else{
                 resolution = DEFAULT_RES;
@@ -211,6 +195,7 @@ public class FunctionPanel extends JPanel{
             y1 = y2;
             x2 += resolution;
         }
+        drawPOI = false;
     }
 }
 
