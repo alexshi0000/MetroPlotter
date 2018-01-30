@@ -115,7 +115,6 @@ public class FunctionPanel extends JPanel{
         //use these two booleans to find local max and local min
         boolean downward = false;
         boolean upward   = false;
-        boolean poiDrawn = false;
         
         while(x2 <= upperBoundX){
             try{
@@ -156,30 +155,19 @@ public class FunctionPanel extends JPanel{
                         (int)(x2Relative * (double)this.getWidth()), (int)((double)this.getHeight() - y2Relative * (double)this.getHeight())
                     );
             // FUNCTION DRAW CODE ENDS HERE
-            
+
             // FIND POINTS OF INTEREST HERE
             g.setColor(metroPalette[0]);
             if(downward && y2-y1 > 0){
                 //local min, we add this so we can use it later with a mouse
-                g.fillOval((int) Math.round(x1Relative * (double)this.getWidth()) -4, (int) Math.round((double)this.getHeight() - y1Relative *
-                                                                        (double)this.getHeight()) - 4, 8, 8);
+                g.fillOval((int) Math.round(x1Relative * (double)this.getWidth()) -3, (int) Math.round((double)this.getHeight() - y1Relative *
+                                                                        (double)this.getHeight()) - 3, 6, 6);
             }
             else if(upward && y2-y1 < 0){
-                g.fillOval((int) Math.round(x1Relative * (double)this.getWidth()) -4, (int) Math.round((double)this.getHeight() - y1Relative *
-                                                                        (double)this.getHeight()) - 4, 8, 8);
+                g.fillOval((int) Math.round(x1Relative * (double)this.getWidth()) -3, (int) Math.round((double)this.getHeight() - y1Relative *
+                                                                        (double)this.getHeight()) - 3, 6, 6);
             }
-            
-            if(Math.abs(x1-drawPOIX) < resolution && drawPOIX != -1 && !poiDrawn){
-                g.fillOval((int) Math.round(x1Relative * (double)this.getWidth()) -4, (int) Math.round((double)this.getHeight() - y1Relative *
-                                                                        (double)this.getHeight()) - 4, 8, 8);
-                g.setColor(metroPalette[2]);
-
-                String label = String.format("(%.2f, %.2f)", round(x1,2), round(y2,2));
-                g.drawString(label, 
-                        (int) Math.round(x1Relative * (double)this.getWidth()), 
-                        (int) Math.round((double)this.getHeight() - y1Relative * (double)this.getHeight()) + 18);
-                poiDrawn = true;
-            }
+         
             g.setColor(metroPalette[2]);
           
             downward = y2-y1 < 0;
@@ -189,7 +177,7 @@ public class FunctionPanel extends JPanel{
             //SCALE ADJUSTMENT STARTS HERE
             
             if(Math.abs(y2 - y1)/Math.abs(x2-x1) > 30){
-                resolution = DEFAULT_RES * 0.01;
+                resolution = DEFAULT_RES * 0.3;
             }
             else{
                 resolution = DEFAULT_RES;
@@ -200,6 +188,37 @@ public class FunctionPanel extends JPanel{
             y1 = y2;
             x2 += resolution;
         }
+        
+        //===================================================================
+     
+        if(drawPOIX != -1){
+            x1 = drawPOIX;
+            try{
+                String expression = "";
+                for(int i = 0; i < function.length(); i++){
+                    if(function.charAt(i) == 'x'){
+                        expression += "["+x1+"]";
+                    }
+                    else{
+                        expression += function.charAt(i);
+                    }
+                }
+                y1 = ExpressionSolver.evaluate(expression);
+            }catch(Exception e){}
+            g.setColor(metroPalette[0]);
+            double x1Relative = (x1 - lowerBoundX) / (upperBoundX - lowerBoundX);
+            double y1Relative = (y1 - lowerBoundY) / (upperBoundY - lowerBoundY);
+            g.fillOval((int) Math.round(x1Relative * (double)this.getWidth()) -4, (int) Math.round((double)this.getHeight() - y1Relative *
+                                                                    (double)this.getHeight()) - 4, 8, 8);
+            g.setColor(metroPalette[2]);
+
+            String label = String.format("(%.2f, %.2f)", round(x1,2), round(y2,2));
+            g.drawString(label, 
+                    (int) Math.round(x1Relative * (double)this.getWidth()), 
+                    (int) Math.round((double)this.getHeight() - y1Relative * (double)this.getHeight()) + 18);
+        }
+        
+        //=========================================================================================================================
     }
 }
 
