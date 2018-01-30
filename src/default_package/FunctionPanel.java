@@ -102,6 +102,12 @@ public class FunctionPanel extends JPanel{
         double x2 = lowerBoundX;
         double y1 = -1e30;
         double y2 = -1e30;
+        
+        //use these two booleans to find local max and local min
+        boolean downward = false;
+        boolean upward   = false;
+        boolean isRoot   = false;
+        
         while(x2 <= upperBoundX){
             try{
                 String expression = "";
@@ -141,6 +147,15 @@ public class FunctionPanel extends JPanel{
                         (int)(x2Relative * (double)this.getWidth()), (int)((double)this.getHeight() - y2Relative * (double)this.getHeight())
                     );
             // FUNCTION DRAW CODE ENDS HERE
+            
+            // FIND POINTS OF INTEREST HERE
+            if(downward && y2-y1 > 0){
+                //local min
+            }
+            downward = y2-y1 < 0;
+            upward   = y2-y1 > 0;
+            // POINTS OF INTEREST ENDS HERE
+            
             x1 = x2;
             y1 = y2;
             x2 += resolution;
