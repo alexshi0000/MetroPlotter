@@ -17,7 +17,6 @@ public class PointOfInterest {
     private String description, hiddenDescription;
     
     public static void resetPointsOfInterest(){
-        FunctionPanel.drawPOI = true;
         arr.clear();
     }
     

@@ -11,7 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseListener;
-import java.awt.evene.MouseEvent;
+import java.awt.event.MouseEvent;
 /**
  *
  * @author lx_user
@@ -258,7 +258,7 @@ public class MetroGUI extends javax.swing.JFrame implements ComponentListener, M
     }// </editor-fold>//GEN-END:initComponents
 
     public void mousePressed(MouseEvent e) {
-       
+    
     }
 
     public void mouseReleased(MouseEvent e) {
@@ -274,7 +274,10 @@ public class MetroGUI extends javax.swing.JFrame implements ComponentListener, M
     }
 
     public void mouseClicked(MouseEvent e) {
-       
+        FunctionPanel.drawPOIX = ((double)e.getX() / (double)Graph.getWidth()) * 
+                (FunctionPanel.upperBoundX - FunctionPanel.lowerBoundX) + FunctionPanel.lowerBoundX;
+        FunctionPanel.redrawFunction = true;
+        updateUI();
     }
     
     private void updateUI(){
@@ -313,7 +316,7 @@ public class MetroGUI extends javax.swing.JFrame implements ComponentListener, M
             FunctionPanel.resolution *= 1.2;
             FunctionPanel.redrawFunction = true;
             updateUI();
-            PointOfInterest.resetPointsOfInterest();
+            FunctionPanel.drawPOIX = -1;
     }//GEN-LAST:event_MinusMouseClicked
 
     private void ZoomMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ZoomMouseClicked
@@ -324,11 +327,12 @@ public class MetroGUI extends javax.swing.JFrame implements ComponentListener, M
             FunctionPanel.resolution /= 1.2;
             FunctionPanel.redrawFunction = true;
             updateUI();
-            PointOfInterest.resetPointsOfInterest();
+            FunctionPanel.drawPOIX = -1;
     }//GEN-LAST:event_ZoomMouseClicked
     //FIX MOUSE DRAGGING BUG
     double y1 = 0, x1 = 0, x2 = 0, y2 = 0;
     private void GraphMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_GraphMousePressed
+        FunctionPanel.drawPOIX = -1;
         y1 = evt.getY();
         x1 = evt.getX();
     }//GEN-LAST:event_GraphMousePressed
@@ -356,7 +360,7 @@ public class MetroGUI extends javax.swing.JFrame implements ComponentListener, M
         updateUI();
         y1 = y2;
         x1 = x2;
-        PointOfInterest.resetPointsOfInterest();
+        FunctionPanel.drawPOIX = -1;
     }//GEN-LAST:event_GraphMouseDragged
 
     private void FunctionFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_FunctionFieldKeyPressed
@@ -391,6 +395,7 @@ public class MetroGUI extends javax.swing.JFrame implements ComponentListener, M
                 window = new MetroGUI();
                 window.Graph.setLayout(new BorderLayout());
                 window.Graph.add(new FunctionPanel(),BorderLayout.CENTER);
+                window.Graph.addMouseListener(window);
                 window.pack();
                 window.setVisible(true);
             }

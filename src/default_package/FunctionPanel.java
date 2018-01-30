@@ -24,11 +24,17 @@ public class FunctionPanel extends JPanel{
     public static double x_coor;
     public static double y_coor;
     public static double scale;
-    public static boolean redrawFunction, drawPOI;   //lock redrawFunction to save time
+    public static double drawPOIX, drawPOIY;
+    public static boolean redrawFunction;   //lock redrawFunction to save time
     public static HashMap<Double, Double> map;
     public static Color plotColor;
     public static Color[] metroPalette = {new Color(239,244,255), new Color(255,196,13), new Color(45,137,239), new Color(0,171,169), new Color(255,0,151)};
-    public static final double DEFAULT_RES = 0.02;
+    public static final double DEFAULT_RES = 0.04;
+    
+    private static double round (double value, int precision) {
+        int s = (int) Math.pow(10, precision);
+        return (double) Math.round(value * s) / s;
+    }
     
     public static void restoreDefaultSettings(){
         map = new HashMap<Double, Double>();
@@ -43,7 +49,8 @@ public class FunctionPanel extends JPanel{
         resolution     = DEFAULT_RES;
         redrawFunction = false;
         plotColor      = metroPalette[(int)(2)];
-        drawPOI        = true;
+        drawPOIX       = -1;
+        drawPOIY       = -1;
         //redraw function must be set differently
     }
 
@@ -108,8 +115,7 @@ public class FunctionPanel extends JPanel{
         //use these two booleans to find local max and local min
         boolean downward = false;
         boolean upward   = false;
-        boolean positive = false;
-        boolean negative = false;
+        boolean poiDrawn = false;
         
         while(x2 <= upperBoundX){
             try{
@@ -152,33 +158,32 @@ public class FunctionPanel extends JPanel{
             // FUNCTION DRAW CODE ENDS HERE
             
             // FIND POINTS OF INTEREST HERE
+            g.setColor(metroPalette[0]);
             if(downward && y2-y1 > 0){
                 //local min, we add this so we can use it later with a mouse
-                String label = String.format("(%.2f, %.2f)", x1, y1);
-                if(drawPOI)
-                    PointOfInterest.addPointOfInterest(new PointOfInterest(x1, y1, "local min", label));
-                x1Relative = (x1 - lowerBoundX) / (upperBoundX - lowerBoundX);
-                y1Relative = (y1 - lowerBoundY) / (upperBoundY - lowerBoundY);
                 g.fillOval((int) Math.round(x1Relative * (double)this.getWidth()) -4, (int) Math.round((double)this.getHeight() - y1Relative *
                                                                         (double)this.getHeight()) - 4, 8, 8);
+            }
+            else if(upward && y2-y1 < 0){
+                g.fillOval((int) Math.round(x1Relative * (double)this.getWidth()) -4, (int) Math.round((double)this.getHeight() - y1Relative *
+                                                                        (double)this.getHeight()) - 4, 8, 8);
+            }
+            
+            if(Math.abs(x1-drawPOIX) < resolution && drawPOIX != -1 && !poiDrawn){
+                g.fillOval((int) Math.round(x1Relative * (double)this.getWidth()) -4, (int) Math.round((double)this.getHeight() - y1Relative *
+                                                                        (double)this.getHeight()) - 4, 8, 8);
+                g.setColor(metroPalette[2]);
+
+                String label = String.format("(%.2f, %.2f)", round(x1,2), round(y2,2));
                 g.drawString(label, 
                         (int) Math.round(x1Relative * (double)this.getWidth()), 
                         (int) Math.round((double)this.getHeight() - y1Relative * (double)this.getHeight()) + 18);
+                poiDrawn = true;
             }
-            else if(upward && y2-y1 < 0){
-                String label = String.format("(%.2f, %.2f)", x1, y1);
-                if(drawPOI)
-                    PointOfInterest.addPointOfInterest(new PointOfInterest(x1, y1, "local max", label));
-                x1Relative = (x1 - lowerBoundX) / (upperBoundX - lowerBoundX);
-                y1Relative = (y1 - lowerBoundY) / (upperBoundY - lowerBoundY);
-                g.fillOval((int) Math.round(x1Relative * (double)this.getWidth()) -4, (int) Math.round((double)this.getHeight() - y1Relative *
-                                                                        (double)this.getHeight()) - 4, 8, 8);
-            }
+            g.setColor(metroPalette[2]);
           
             downward = y2-y1 < 0;
             upward   = y2-y1 > 0;
-            negative = y2 < 0;
-            positive  = y2 > 0;
             // POINTS OF INTEREST ENDS HERE ==========================================================
             
             //SCALE ADJUSTMENT STARTS HERE
@@ -195,7 +200,6 @@ public class FunctionPanel extends JPanel{
             y1 = y2;
             x2 += resolution;
         }
-        drawPOI = false;
     }
 }
 
