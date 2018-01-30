@@ -39,7 +39,7 @@ public class FunctionPanel extends JPanel{
         scale       = 1;
         x_coor      = 0.0;
         y_coor      = 0.0;
-        resolution  = 0.02;
+        resolution  = 0.025;
         redrawFunction = false;
         plotColor = metroPalette[(int)(2)];
         //redraw function must be set differently
@@ -64,9 +64,9 @@ public class FunctionPanel extends JPanel{
         for(int x = (int)lowerBoundX; x < Math.round(upperBoundX); x ++){
             if(x % scale == 0){
                 x2Relative = (x - lowerBoundX) / (upperBoundX - lowerBoundX);
-                y2Relative = (0.1 - lowerBoundY) / (upperBoundY - lowerBoundY);
+                y2Relative = (resolution*3.5 - lowerBoundY) / (upperBoundY - lowerBoundY);
                 x1Relative = (x - lowerBoundX) / (upperBoundX - lowerBoundX);
-                y1Relative = (-0.1 - lowerBoundY) / (upperBoundY - lowerBoundY);
+                y1Relative = (-resolution*3.5 - lowerBoundY) / (upperBoundY - lowerBoundY);
                 g.drawLine((int)(x1Relative * (double)width), (int)((double)height - y1Relative * (double)height),
                                 (int)(x2Relative * (double)width), (int)((double)height - y2Relative * (double)height));
             }
@@ -74,9 +74,9 @@ public class FunctionPanel extends JPanel{
 
         for(int y = (int)lowerBoundY; y < Math.round(upperBoundY); y ++){
             if(y % scale == 0){
-                x2Relative = (0.1 - lowerBoundX) / (upperBoundX - lowerBoundX);
+                x2Relative = (resolution*3.5 - lowerBoundX) / (upperBoundX - lowerBoundX);
                 y2Relative = (y - lowerBoundY) / (upperBoundY - lowerBoundY);
-                x1Relative = (-0.1 - lowerBoundX) / (upperBoundX - lowerBoundX);
+                x1Relative = (-resolution*3.5 - lowerBoundX) / (upperBoundX - lowerBoundX);
                 y1Relative = (y - lowerBoundY) / (upperBoundY - lowerBoundY);
                 g.drawLine((int)(x1Relative * (double)width), (int)((double)height - y1Relative * (double)height),
                                 (int)(x2Relative * (double)width), (int)((double)height - y2Relative * (double)height));
@@ -150,11 +150,38 @@ public class FunctionPanel extends JPanel{
             
             // FIND POINTS OF INTEREST HERE
             if(downward && y2-y1 > 0){
-                //local min
+                //local min, we add this so we can use it later with a mouse
+                //PointOfInterest.arr.add(new PointOfInterest(x1, y1, "local min", ""));
+                x1Relative = (x1 - lowerBoundX) / (upperBoundX - lowerBoundX);
+                y1Relative = (y1 - lowerBoundY) / (upperBoundY - lowerBoundY);
+                g.fillOval((int) Math.round(x1Relative * (double)this.getWidth()) -4, (int) Math.round((double)this.getHeight() - y1Relative *
+                                                                        (double)this.getHeight()) - 4, 8, 8);
+                g.drawString("("+x1+", "+y1+")", 
+                        (int) Math.round(x1Relative * (double)this.getWidth()), 
+                        (int) Math.round((double)this.getHeight() - y1Relative * (double)this.getHeight()) - 4);
+            }
+            else if(upward && y2-y1 < 0){
+                //PointOfInterest.arr.add(new PointOfInterest(x1, y1, "local min", ""));
+                x1Relative = (x1 - lowerBoundX) / (upperBoundX - lowerBoundX);
+                y1Relative = (y1 - lowerBoundY) / (upperBoundY - lowerBoundY);
+                g.fillOval((int) Math.round(x1Relative * (double)this.getWidth()) -4, (int) Math.round((double)this.getHeight() - y1Relative *
+                                                                        (double)this.getHeight()) - 4, 8, 8);
+            }
+            else if(y1 == 0){
+                //PointOfInterest.arr.add(new PointOfInterest(x1, y1, "local min", ""));
+                x1Relative = (x1 - lowerBoundX) / (upperBoundX - lowerBoundX);
+                y1Relative = (y1 - lowerBoundY) / (upperBoundY - lowerBoundY);
+                g.fillOval((int) Math.round(x1Relative * (double)this.getWidth()) -4, (int) Math.round((double)this.getHeight() - y1Relative *
+                                                                        (double)this.getHeight()) - 4, 8, 8);
             }
             downward = y2-y1 < 0;
             upward   = y2-y1 > 0;
             // POINTS OF INTEREST ENDS HERE
+            
+            //SCALE ADJUSTMENT STARTS HERE
+            
+            
+            //SCALE ADJUSTMENT ENDS HERE
             
             x1 = x2;
             y1 = y2;
