@@ -212,7 +212,7 @@ public class FunctionPanel extends JPanel{
                                                                     (double)this.getHeight()) - 4, 8, 8);
             g.setColor(metroPalette[2]);
 
-            String label = String.format("(%.2f, %.2f)", round(x1,2), round(y2,2));
+            String label = String.format("(%.2f, %.2f)", round(x1,2), round(y1,2));
             g.drawString(label, 
                     (int) Math.round(x1Relative * (double)this.getWidth()), 
                     (int) Math.round((double)this.getHeight() - y1Relative * (double)this.getHeight()) + 18);
