@@ -1,5 +1,5 @@
 # MetroPlotter
-plots functions with nice metro color scheme
+MetroPlotter is a Desktop application that plots functions using a metro themed ui. Shunting yard algorithm and gui were written entirely in Java.
 <br>
 
 ![alt text](https://github.com/alexshi0000/MetroPlotter/blob/master/2018-05-23-171104_1600x900_scrot.png)
