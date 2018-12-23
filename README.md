@@ -8,7 +8,7 @@ MetroPlotter is a Desktop application that plots functions using a metro themed 
 - notice that you can use sqrt by ^(1/2)
 ### How to Run
 ```bash
-simply navigate into the 'dist' folder then type
+# simply navigate into the 'dist' folder then type
 java -jar MetroPlotter.jar
 ```
 <br>
