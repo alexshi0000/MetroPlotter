@@ -1,5 +1,5 @@
 # MetroPlotter
-plots functions with nice metro color scheme 
+plots functions with nice metro color scheme
 <br>
 
 ![alt text](https://github.com/alexshi0000/MetroPlotter/blob/master/2018-05-23-171104_1600x900_scrot.png)
